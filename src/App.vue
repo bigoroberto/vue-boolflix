@@ -1,28 +1,55 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Header @clickSearch ='callApi'/>
+    <Main :listaFilm = 'arrFilm'/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Header from './components/Header.vue';
+import Main from '@/components/Main.vue';
+
+import axios from 'axios';
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  components: { 
+    Header,
+    Main,
+  },
+
+  data(){
+    return{
+      apiURL: 'https://api.themoviedb.org/3/search/movie',
+      apiKey: '883d759bdcf64cac4dd1122ba345f4b3',
+      query: '',
+      arrFilm: [],
+    }
+  },
+  methods : {
+    callApi (searchText){
+      axios.get(this.apiURL, {
+        params:{
+          api_key: this.apiKey,
+          query: searchText,
+          language : "it-IT"
+        }
+      })
+      .then(res=>{
+        console.log(res.data.results);
+        this.arrFilm = res.data.results;
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+    }
+  },
+  created(){
+    //this.callApi();
   }
 }
 </script>
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+   @import './assets/styles/generals';
 </style>
