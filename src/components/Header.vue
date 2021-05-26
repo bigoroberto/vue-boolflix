@@ -1,6 +1,7 @@
 <template>
   <header>
     <input type="text"
+            @keyup.enter='$emit("clickSearch", searchFilm)'
             v-model="searchFilm">
     <button
       @click='$emit("clickSearch", searchFilm)'
