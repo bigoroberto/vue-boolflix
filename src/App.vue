@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <Header @clickSearch ='callApi'/>
+    <!--  all'header (che mi ha passato con il $emit l'evento) gli restituisco l'evento con la funzione (callAPI)-->
+    <Header @clickSearch ='callAPI'/>
+    <!-- al main assegno (dando un props di nome listaFilm) l'arrFilm-->
     <Main :listaFilm = 'arrFilm'/>
   </div>
 </template>
@@ -23,11 +25,14 @@ export default {
       apiURL: 'https://api.themoviedb.org/3/search/movie',
       apiKey: '883d759bdcf64cac4dd1122ba345f4b3',
       query: '',
+      /* creo una var che mi prenda il risultato della chiamata API */
       arrFilm: [],
     }
   },
   methods : {
-    callApi (searchText){
+    /* creo la funzione che mi fa chiamare l'API ogni volta che ne ho bisogno */
+    /* assegno la funzione callAPI all'header aggiungendo un searchText nelle tonde (che prenderà il valore del searchFilm) e alla query nei PARAMS */
+    callAPI (searchText){
       axios.get(this.apiURL, {
         params:{
           api_key: this.apiKey,
@@ -37,6 +42,7 @@ export default {
       })
       .then(res=>{
         console.log(res.data.results);
+        /* uso l'array vuoto creato nel data, che richiamo con il this. per ricerevere il risultato della chiamata API */
         this.arrFilm = res.data.results;
       })
       .catch(err=>{
