@@ -1,29 +1,47 @@
 <template>
   <header>
-    <!-- assegno al keyup e al click un $emit, quindi passerò al padre un evento "clickSearch" con un valore (searchFilm) -->
-    <input type="text"
-            @keyup.enter='$emit("clickSearch", searchFilm)'
-            v-model="searchFilm">
-    <button
-      @click='$emit("clickSearch", searchFilm)'
-      >
-      SEARCH
-    </button>
+    <div class="container d-flex pt-3">
+      <div class="flex-grow-1">
+        <input
+          v-model="textToSearch"
+          placeholder="Cerca..."
+          class="form-control"
+          type="text" />
+      </div>
+      <div>
+        <button 
+        @click="$emit('startSearch', {text:textToSearch, type:'movie'})" 
+        class="btn btn-primary ms-3">CERCA FILM</button>
+      </div>
+      <div>
+        <button 
+        @click="$emit('startSearch', {text:textToSearch, type:'tv'})" 
+        class="btn btn-primary ms-3">CERCA SERIE</button>
+      </div>
+      <div>
+        <button 
+        @click="$emit('startSearch', {text:textToSearch, type:'all'})" 
+        class="btn btn-primary ms-3">CERCA TUTTO</button>
+      </div>
+
+    </div> <!-- chiusura container -->
   </header>
 </template>
 
 <script>
 export default {
-  name:'Header',
-  data(){
-    return{
-      /* creo una variabile searchFilm che di base lascio vuota e che prenderà poi il valore del v-model */
-      searchFilm : '',
-    }
-  }
-}
+  name: "Header",
+  data() {
+    return {
+      textToSearch: "",
+    };
+  },
+};
 </script>
 
-<style>
-
+<style lang="scss" scoped>
+header {
+  height: 70px;
+  background-color: cornflowerblue;
+}
 </style>

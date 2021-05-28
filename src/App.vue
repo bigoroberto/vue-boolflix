@@ -1,16 +1,14 @@
-<template>
+<template> 
   <div id="app">
-    <!--  all'header (che mi ha passato con il $emit l'evento) gli restituisco l'evento con la funzione (callAPI)-->
-    <Header @clickSearch ='callAPI'/>
-    <!-- al main assegno (dando un props di nome listaFilm) l'arrFilm-->
-    <Main :listaFilm = 'arrFilm'/>
+    <Header @startSearch ='startSearch'/>
+    <Main v-if="results.movie.length > 0" type='movie' :list="results.movie" /> 
+    <Main v-if="results.tv.length > 0" type='tv' :list="results.tv" /> 
   </div>
 </template>
 
 <script>
 import Header from './components/Header.vue';
 import Main from '@/components/Main.vue';
-
 import axios from 'axios';
 
 export default {
@@ -22,28 +20,43 @@ export default {
 
   data(){
     return{
-      apiURL: 'https://api.themoviedb.org/3/search/movie',
+      apiUrl: 'https://api.themoviedb.org/3/search/',
       apiKey: '883d759bdcf64cac4dd1122ba345f4b3',
       query: '',
-      /* creo una var che mi prenda il risultato della chiamata API */
-      arrFilm: [],
+      results:{
+        'movie':[],
+        'tv':[],
+      }
     }
   },
   methods : {
-    /* creo la funzione che mi fa chiamare l'API ogni volta che ne ho bisogno */
-    /* assegno la funzione callAPI all'header aggiungendo un searchText nelle tonde (che prenderà il valore del searchFilm) e alla query nei PARAMS */
-    callAPI (searchText){
-      axios.get(this.apiURL, {
+
+    startSearch(obj){
+      this.resetResults();
+      if(obj.type === 'all'){
+        this.getAPI(obj.text, 'movie');
+        this.getAPI(obj.text, 'tv');
+      }else{
+        this.getAPI(obj.text, obj.type);
+      }
+    },
+
+    resetResults(){
+      this.results.movie = [];
+      this.results.tv = [];
+    },
+    
+    getAPI (query, type){
+      axios.get(this.apiUrl + type, {
         params:{
           api_key: this.apiKey,
-          query: searchText,
+          query: query,
           language : "it-IT"
         }
       })
       .then(res=>{
-        console.log(res.data.results);
-        /* uso l'array vuoto creato nel data, che richiamo con il this. per ricerevere il risultato della chiamata API */
-        this.arrFilm = res.data.results;
+        this.results[type] = res.data.results
+        console.log(this.results);
       })
       .catch(err=>{
         console.log(err)
@@ -51,11 +64,14 @@ export default {
     }
   },
   created(){
-    //this.callApi();
+    //this.getAPI('ritorno al futuro', 'movie', 'tv');
   }
 }
 </script>
 
 <style lang="scss">
    @import './assets/styles/generals';
+   body{
+     background-color: darken($color: #0c5466, $amount: 0);
+   }
 </style>
