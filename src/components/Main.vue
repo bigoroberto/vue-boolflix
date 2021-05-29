@@ -1,12 +1,15 @@
 <template>
 <main class="container"> 
+  <!-- mostro a video il titolo relativo al type -->
   <h1>{{titles[type]}}</h1>
-  {{list.length}}
-  <Card 
-    v-for="card in list"
-    :key="card.id"
-    :card="card"
-    />
+  <div class="copertina">
+    <!-- ciclo la lista dei risultati  -->
+    <Card 
+      v-for="card in list"
+      :key="card.id"
+      :card="card"
+      />
+  </div>
 </main>
 </template>
 
@@ -34,5 +37,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.copertina{
+  display: flex;
+}
 
 </style>

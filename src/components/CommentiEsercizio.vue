@@ -158,5 +158,10 @@ props:{
   <li class="list-group-item">{{card.vote_average}}</li>
 </ul>
 -->
+
+
+<!-- -->
+<!-- -->
+<!-- -->
 <!-- -->
 <!-- -->
