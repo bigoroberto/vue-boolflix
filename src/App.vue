@@ -1,97 +1,137 @@
-<template> 
-  <div id="app">
+<template>
+    <div id="app">
+      <!-- richiamo evento custom nell'header che scatenerà la funzione searchMovies -->
+        <Header
+        @searchMovie= "searchMovies"
+        :setDefault = setDefault
+        />
 
-    <!-- all''evento $emit startSearch invoco la funzione startSearch -->
-    <Header @startSearch ='startSearch'/>
+        <h1 
+        v-if="check()"
+        class="text-center mt-5"
+        >La ricerca non ha prodotto risultati</h1>
+        
+        <h1 
+        v-if=" searched===false " 
+        class="text-center mt-5"
+        >FILM DEL MOMENTO</h1>
 
-    <!-- in caso di assenza di risultati visualizzo questo h1 -->
-    <h1 v-if="results.movie.length === 0 && results.tv.length === 0">Nessun risultato trovato</h1>
+        <Main v-if="results.movie.length > 0" type="movie" :list= results.movie :searched= searched />
 
-    <!-- ho due componenti Main per movie e tv e li visualizzo solo se ci sono gli elementi nell'array -->
-    <!-- passo due props: tipo di dato (movie o tv) e l'elenco dei risultati -->
-    <Main v-if="results.movie.length > 0" type='movie' :list="results.movie" /> 
-    <Main v-if="results.tv.length > 0" type='tv' :list="results.tv" /> 
-  </div>
+        <h1 
+        v-if=" searched===false "
+        class="text-center mt-5"
+        >SERIE TV DEL MOMENTO</h1>
+
+        <Main v-if="results.tv.length > 0" type="tv" :list= results.tv :searched= searched />
+
+    </div>
 </template>
 
 <script>
-import Header from './components/Header.vue';
-import Main from '@/components/Main.vue';
+/* import Vue from 'vue' */
 import axios from 'axios';
+import Header from './components/Header';
+import Main from './components/Main'
+/* import FlagIcon from 'vue-flag-icon'
+Vue.use(FlagIcon); */
 
 export default {
   name: 'App',
-  components: { 
+  components: {
     Header,
-    Main,
+    Main
   },
-
   data(){
-    return{
-      apiUrl: 'https://api.themoviedb.org/3/search/',
-      apiKey: '883d759bdcf64cac4dd1122ba345f4b3',
-      query: '',
-      //in questo oggetto memorizzo le due ricerche
-      results:{
-        'movie':[],
-        'tv':[],
-      }
-    }
-  },
-  methods : {
-
-    //lancio la ricerca
-    startSearch(obj){
-      //resetto le ricerche passate
-      this.resetResults();
-      //se "CERCA TUTTO" faccio due chiamate
-      if(obj.type === 'all'){
-        this.getAPI(obj.text, 'movie');
-        this.getAPI(obj.text, 'tv');
-      }else{
-        this.getAPI(obj.text, obj.type);
-      }
-    },
-
-    resetResults(){
-      this.results.movie = [];
-      this.results.tv = [];
-    },
-    
-    //funzione per la chiamata axios
-    getAPI (query, type){
-
-      //effettuo la chiamata solo se c'è un testo da cercare 
-      if(query !== ''){
-        axios.get(this.apiUrl + type, {
-          params:{
-            api_key: this.apiKey,
-            query: query,
-            language : "it-IT"
-          }
-        })
-        .then(res=>{
-          // in base al tipo di ricerca salvo il dato nell'array dell'oggetto results
-          this.results[type] = res.data.results
-          console.log(this.results);
-        })
-        .catch(err=>{
-          console.log(err)
-        })
-      }
+    return {
+        apiUrl:"https://api.themoviedb.org/3/search/",
+        apiKey: '4df959eab3283b1ac2c5a67b1e5247b9',
+        results:{
+            "movie":[],
+            "tv":[]
+        },
+        searched:false
     }
   },
   created(){
-    //this.getAPI('ritorno al futuro', 'movie', 'tv');
-  }
+    //richiamo le funzione due volte passando un parametro differente all'interno,in modo da avere sia film che serie tv alla creazione
+    this.getPop("movie");
+    this.getPop("tv");
+            
+        
+  },
+    methods:{
+        //funzione per la condizione del v-if del primo titolo,se la ricerca non produrrà risultati allora sarà visibile
+        check(){
+            return this.searched && this.results.movie.length === 0 && this.results.tv.length === 0
+        },
+        //funzione per resettare gli array 
+        reset(){
+            this.results.movie= [];
+            this.results.tv= [];
+            this.searched=false;//resetto a false il dato in modo che il primo titolo verrà nascosto al momento del reset e renderà visibile film/serie popolari
+        },
+        //funzione per la situazione di default,viene passata come prop per il bottone reset
+        setDefault(){
+            this.reset();
+            this.getPop("movie");
+            this.getPop("tv");
+        },
+        //funziona che viene scatenata dal bottone cerca o dal keyup.enter ,passo come parametro l'oggetto che viene mandato tramite $emit
+        searchMovies(obj){
+            this.reset();//resetto in modo che se la ricerca restituisce un errore non rimangono gli elementi precedenti
+            if(obj.type === "all" && obj.text !== ""){
+                //passo manualmente il type,in modo da richiamare entrambe le funzioni
+                this.getApi(obj.text, "movie");
+                this.getApi(obj.text, "tv");
+                this.searched=true;//una volta lanciata la funzione cambio il valore a true
+            }else{
+                //se la stringa di ricerca rimane vuota allora richiamo la situazione di default
+                this.getPop("movie");
+                this.getPop("tv");
+            }
+            
+        },
+
+        //funzione per ricavare i dati
+        getApi(query, type){
+            axios.get(this.apiUrl+type,{
+                params:{
+                    api_key: this.apiKey,
+                    query: query,
+                    language: "it-IT"
+                }
+            })
+            .then(res => {
+                    this.results[type] = res.data.results;
+            })
+            .catch(err => {
+                console.log(err);
+            })
+            
+        },
+        //funzione per ricavare film e serie tv più popolari alla creazione dell'app
+        getPop(typePop){
+            axios.get("https://api.themoviedb.org/3/"+ typePop +"/popular",{
+                params:{
+                    api_key: this.apiKey,
+                    language: "it-IT"
+                }
+            })
+            .then(res => {
+                this.results[typePop] = res.data.results;
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        }
+    }
 }
 </script>
 
 <style lang="scss">
-   @import './assets/styles/generals';
-body {
-  text-align: center;
-  color: #2c3e50;
-  
+@import './assets/styles/general.scss';
+h1{
+    text-shadow: 4px 4px 2px #000;
 }
 </style>

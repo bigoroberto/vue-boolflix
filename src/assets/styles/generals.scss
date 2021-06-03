@@ -1,1 +1,16 @@
+// l'alias ~ punta alla cartella nodule_modiles
 @import '~bootstrap/scss/bootstrap';
+
+// imposto il font caricato 
+@import "~@fontsource/roboto/index.css";
+@import "~@fontsource/roboto/700.css";
+
+@import "./vars";
+
+
+body{
+  font-family: $main-fonts;
+  background-color: #383838;
+  color: aliceblue;
+
+}
