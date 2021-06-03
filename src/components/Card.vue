@@ -1,99 +1,103 @@
 <template>
-    
-  <div class="flip-card mb-3">
+  <div class="p-3">
+
+    <div class="flip-card">
       <div class="flip-card-inner">
-
         <div class="flip-card-front">
-            <img :src="'https://image.tmdb.org/t/p/w342' + card.poster_path" :alt="card.title || card.name">
+          <img v-if="card.poster_path" :src="imageURL+card.poster_path" :alt="card.title || card.name">
+          <h3 v-else>{{ card.title || card.name}}</h3>
         </div>
-
         <div class="flip-card-back">
-            <ul class="list-group">
+          <div class="top">
+              <p>
+                <strong>Titolo: </strong>
+                {{ card.title || card.name}}
+              </p>
+              <p>
+                <strong>Titolo originale: </strong>
+                {{ card.original_title  || card.original_name}}
+              </p>
 
-                <li><strong>Titolo:</strong> {{ card.title || card.name }}</li>
+              <div>
+                <strong>Voto: </strong>
 
-                <li><strong>Titolo originale:</strong> {{ card.original_title || card.original_name }}</li>
+                <div class="stars">
 
-                <!-- <li><flag :iso= card.original_language /></li> -->
-
-                <li v-if="flagFound()"><strong>Lingua: </strong>
-                  <img :src="pathFlag" :alt="card.original_language">
-                </li>
-
-                <li v-else><strong>Lingua:</strong> {{ card.original_language.toUpperCase() }}</li>
-
-                <li><strong>Voto: </strong>
-
-                  <div class="stars">
-
-                    <div class="empty">
-                      <div class="inner">
-                        <!-- faccio un ciclo di 5 delle stelle vuote -->
-                        <i v-for=" (i, index) in 5" :key="index + 'empty'" class="far fa-star"></i>
-                      </div>
+                  <div class="empty">
+                    <div class="inner">
+                      <i class="far fa-star"></i>
+                      <i class="far fa-star"></i>
+                      <i class="far fa-star"></i>
+                      <i class="far fa-star"></i>
+                      <i class="far fa-star"></i>
                     </div>
-
-                    <!-- bind nello style per moltiplicare il dato (10% di inner più il voto medio) -->
-                    <div class="full" :style="`width:${7.6*card.vote_average}px`">
-                      <div class="inner">
-                        <!-- faccio un ciclo di 5 delle stelle piene -->
-                        <i v-for=" (i, index) in 5" :key="index + 'full'" class="fas fa-star"></i>
-                      </div>
-                    </div>
-
                   </div>
 
-                </li>
-                
-                <li class="line-clamp"><strong>Descrizione:</strong> {{ card.overview }}</li>
+                  <div class="solid" :style="`width:${6.7*card.vote_average}px`">
+                    <div class="inner">
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                    </div>
+                  </div>
+                  
+                </div>
 
-            </ul>
+            </div>
+            <p>
+              <strong>Lingua: </strong>
+              <img class="flag"
+                v-if="flags.includes(card.original_language)" 
+              :src="require(`@/assets/img/${card.original_language}.png`)" :alt="card.original_language">
+              <span v-else >{{ card.original_language }}</span>
+            </p>
+          </div>
+          
+
+          
+          <p v-if="card.overview.length > 0" class="overview">
+            <strong>Overview: </strong>
+            {{ card.overview }}
+          </p>
         </div>
+      </div>
     </div>
-  </div>
 
+  </div>
 </template>
 
 <script>
 export default {
-    name:'Card',
-    props: {
-        card: Object
-    },
-    data(){
-        return{
-            countries:["it","en"],
-            pathFlag:""
-        }
-    },
-    methods:{
-        //funzione per condizione delle flag trovate
-        flagFound(){
-            if(this.countries.includes(this.card.original_language)){
-                this.pathFlag = require("../assets/img/" + this.card.original_language + ".jpg")
-            }
-            return this.countries.includes(this.card.original_language)
-            
-        },
-        //funzione che divide il voto a metà per poi arrotondarlo per eccesso
-          star(){
-            return Math.ceil(this.card.vote_average / 2);
-          }
+  name: 'Card',
+  data(){
+    return{
+      flags:['it','en'],
+      imageURL: 'https://image.tmdb.org/t/p/w342'
     }
+  },
+  props:{
+    card:Object,
+  },
+  computed:{
+    
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/styles/utilities.scss';
-/* classi per ruotare la card */
-.flip-card {
-  background-color: transparent;
-  max-width: 352px;
-  height: 513px;
-  perspective: 1000px;
-  cursor: pointer;
-  padding: 0 5px;
-}
+  .flag{
+    width: 30px;
+  }
+  .flip-card {
+    background-color: transparent;
+    width: 342px;
+    height: 513px;
+    perspective: 1000px;
+    transform: scale(0.7,0.7);
+    overflow: hidden;
+  }
 .flip-card-inner {
   position: relative;
   width: 100%;
@@ -101,9 +105,10 @@ export default {
   transition: transform 0.6s;
   transform-style: preserve-3d;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  //font-size: 0.75rem;
 }
 .flip-card:hover .flip-card-inner {
-  transform: rotatey(180deg);
+  transform: rotateY(180deg);
 }
 .flip-card-front, .flip-card-back {
   position: absolute;
@@ -111,86 +116,44 @@ export default {
   height: 100%;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  border: 1px solid #616161;
-  border-radius: 10px;
-  overflow: hidden;
+  background-color: #202020;
+  border: 1px solid white;
+  
 }
 .flip-card-front {
-  background-color: #bbb;
   color: black;
-  font-size: 20px;
-  font-weight: 700;
-  text-align: center;
   img{
-    height: 100%;
     width: 100%;
+  }
+  h3{
+    color: white;
+    margin:10px
   }
 }
 .flip-card-back {
-  background-color: #000;
   color: white;
   transform: rotateY(180deg);
-}
-/* /classi per ruotare la card */
-ul{
-    list-style: none;
-    padding: 15px;
-     li{
-         display: inline-block;
-         margin-bottom: 15px;
-         i{
-           color: yellow;
-         }
-        img{
-            width: 30px;
-        }
-    }
+  padding:10px;
+  .top{
+    height: 40%;
+  }
+  .overview{
+    height: 60%;
+    overflow: auto;
+  }
 }
 .stars{
-  position: relative;
-  .full, .empty{
-    position: absolute;
+  position:relative;
+  margin-bottom: 15px;
+  font-size: 0.75rem;
+  .empty, .solid{
+    position:absolute;
+    top: -22px;
+    left: 45px;
     overflow: hidden;
-     left: 40px;
-     top: -22px;
-    .inner{
-      width: 79px;
-      font-size: 14px;
-    }
   }
-}
-@media screen and (max-width:900px){
-  .flip-card{
-    max-width: 264px;
-    height: 385px;
-    padding: 0 3px;
-  }
-  ul{
-    padding: 10px;
-    li{
-      font-size: 14px;
-      margin-bottom: 5px;
-      img{
-        width: 20px;
-      }
-    }
-  }
-  .stars{
-    .full, .empty{
-      left: 35px;
-    }
-  }
-}
-@media screen and (max-width:700px){
-  .flip-card{
-    max-width: 235px;
-    height: 342px;
-  }
-  ul{
-    padding: 5px;
-    li{
-      margin-bottom: 5px;
-    }
+  .inner{
+    width: 68px;
   }
 }
 </style>

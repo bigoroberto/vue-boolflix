@@ -1,48 +1,45 @@
 <template>
-  <main>
-    
-    <div class=" wrap p-5">
-        <h1 v-if="searched" class="text-center mb-5">{{ titles[type].toUpperCase() }}</h1>
-        <!-- componente slider e all'interno inserisco le card -->
-        <VueSlickCarousel v-bind="settings">
-            <Card
-            v-for= "card in list" 
-            :key= "card.id"
-            :card = card
-            />
-        </VueSlickCarousel>
-    </div>
+  <main class="container">
+    <!-- mostro a video il titolo realitvo al type -->
+    <h1>{{ titles[type] }}</h1>
 
+      <VueSlickCarousel v-bind="settings">
+        <Card
+            v-for="card in list"
+            :key="card.id"
+            :card="card"
+          />
+      </VueSlickCarousel>
+
+    <!-- ciclo la lista dei risultati in Card -->
+        
+      
   </main>
 </template>
 
 <script>
-import Card from './Card';
-//importo lo slider installato
-import VueSlickCarousel from 'vue-slick-carousel'
-import 'vue-slick-carousel/dist/vue-slick-carousel.css'
-import 'vue-slick-carousel/dist/vue-slick-carousel-theme.css'
+import Card from '@/components/Card';
+import VueSlickCarousel from 'vue-slick-carousel';
+import 'vue-slick-carousel/dist/vue-slick-carousel.css';
+import 'vue-slick-carousel/dist/vue-slick-carousel-theme.css';
 
 export default {
-    name:'Main',
-    components:{
-        Card,
-        VueSlickCarousel 
-    },
-    props:{
-        type: String,
-        list: Array,
-        searched:Boolean,
-    },
-    data(){
-        return{
-            //sfruttando il type inserito nel tag del main andrò a cambiare in modo dinamico il titolo
-            titles:{
-                'movie': 'Film trovati',
-                'tv': 'Serie tv trovate'
-            },
-            //impostazioni per lo slider
-            settings:{
+  name: 'Main',
+  components:{
+    Card,
+    VueSlickCarousel 
+  },
+  props:{
+    type: String,
+    list: Array
+  },
+  data(){
+    return{
+      titles:{
+        'movie': 'Film',
+        'tv': 'Serie',
+      },
+       settings:{
                 "centerMode": true,
                 "centerPadding": "10%",
                 "focusOnSelect": true,
@@ -98,14 +95,12 @@ export default {
                     }
                 ]
             }
-        }
+      
     }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-.wrap{
-    max-width: 1920px;
-    margin: 0 auto;
-}
+
 </style>
