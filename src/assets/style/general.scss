@@ -1,0 +1,12 @@
+// importo bootstrap (ricordarsi il comando npm install bootstrap)
+@import '~bootstrap/scss/bootstrap';
+// importo il font (ricordarsi il comando npm install @fontsource/nomefont)
+@import '~@fontsource/roboto/index.css';
+// importo le variabili in vars.scss
+@import './vars';
+
+body{
+  font-family: $main-fonts;
+  background-color: $color-main;
+  color: white;
+}

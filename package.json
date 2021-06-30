@@ -9,12 +9,13 @@
   },
   "dependencies": {
     "@fontsource/roboto": "^4.3.0",
+    "@fortawesome/fontawesome": "^1.1.8",
+    "@fortawesome/fontawesome-free-solid": "^5.0.13",
+    "@fortawesome/vue-fontawesome": "^2.0.2",
     "axios": "^0.21.1",
     "bootstrap": "^5.0.1",
     "core-js": "^3.6.5",
-    "vue": "^2.6.11",
-    "vue-flag-icon": "^1.0.6",
-    "vue-slick-carousel": "^1.0.6"
+    "vue": "^2.6.11"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

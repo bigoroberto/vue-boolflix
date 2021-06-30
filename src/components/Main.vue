@@ -1,106 +1,40 @@
 <template>
   <main class="container">
-    <!-- mostro a video il titolo realitvo al type -->
-    <h1>{{ titles[type] }}</h1>
-
-      <VueSlickCarousel v-bind="settings">
-        <Card
-            v-for="card in list"
-            :key="card.id"
-            :card="card"
-          />
-      </VueSlickCarousel>
-
-    <!-- ciclo la lista dei risultati in Card -->
-        
-      
+    <!-- inserisco il titolo in base al type -->
+    <!-- richiamo titles -->
+    <!-- utilizzo la bracket notation per ricevere la prop type -->
+    <h1 class="text-center mt-3 mb-3">{{ titles[type] }}</h1>
+    <div class="row d-flex justify-content-center mt-2 mb-2">
+    <Card 
+      v-for="card in list" 
+      :key="card.id" 
+      :card="card" 
+    />
+    </div>
   </main>
 </template>
 
 <script>
-import Card from '@/components/Card';
-import VueSlickCarousel from 'vue-slick-carousel';
-import 'vue-slick-carousel/dist/vue-slick-carousel.css';
-import 'vue-slick-carousel/dist/vue-slick-carousel-theme.css';
+import Card from "./Card.vue";
 
 export default {
-  name: 'Main',
-  components:{
-    Card,
-    VueSlickCarousel 
-  },
-  props:{
+  components: { Card },
+  name: "Main",
+  props: { // App passa a Main i seguenti dati
     type: String,
-    list: Array
+    list: Array,
   },
-  data(){
-    return{
-      titles:{
-        'movie': 'Film',
-        'tv': 'Serie',
+  data() {
+    return {
+      // creo un oggetto titles per visualizzare entrambi i titoli 
+      titles: {
+        movie: "Movies",
+        tv: "TV Series",
       },
-       settings:{
-                "centerMode": true,
-                "centerPadding": "10%",
-                "focusOnSelect": true,
-                "infinite": true,
-                "slidesToShow": 4,
-                "speed": 500,
-                "responsive": [
-                    {
-                    "breakpoint": 1300,
-                    "settings": {
-                        "slidesToShow": 3
-                    }
-                    },
-                    {
-                    "breakpoint": 900,
-                    "settings": {
-                        "slidesToShow": 3,
-                        "centerPadding": "5%",
-                        "arrows":false
-                    }
-                    },
-                    {
-                    "breakpoint": 700,
-                    "settings": {
-                        "slidesToShow": 2,
-                        "centerPadding": "15%",
-                        "arrows":false
-                    }
-                    },
-                    {
-                    "breakpoint": 550,
-                    "settings": {
-                        "slidesToShow": 2,
-                        "centerPadding": "5%",
-                        "arrows":false
-                    }
-                    },
-                    {
-                    "breakpoint": 450,
-                    "settings": {
-                        "slidesToShow": 1,
-                        "centerPadding": "20%",
-                        "arrows":false
-                    }
-                    },
-                    {
-                    "breakpoint": 375,
-                    "settings": {
-                        "slidesToShow": 1,
-                        "centerPadding": "15%",
-                        "arrows":false
-                    }
-                    }
-                ]
-            }
-      
-    }
-  }
-}
+    };
+  },
+};
 </script>
 
-<style lang="scss" scoped>
-
+<style lang='scss' scoped>
 </style>
